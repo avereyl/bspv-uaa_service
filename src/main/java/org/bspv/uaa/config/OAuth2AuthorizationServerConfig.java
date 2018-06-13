@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
@@ -45,9 +44,10 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         clients
         .inMemory()
             .withClient("bspv-edge-service")
-            .secret(passwordEncoder().encode("password"))
-            .authorizedGrantTypes("authorization_code", "refresh_token", "password")
-            .scopes("openid")
+            .secret("{noop}password")
+//            .authorizedGrantTypes("authorization_code", "implicit", "refresh_token", "password")
+            .authorizedGrantTypes("authorization_code", "refresh_token", "password", "implicit")
+            .scopes("openid",  "special")
             .accessTokenValiditySeconds(3600)
             // 1 hour
             .refreshTokenValiditySeconds(2592000)
@@ -94,8 +94,4 @@ public class OAuth2AuthorizationServerConfig extends AuthorizationServerConfigur
         };
     }
 
-    @Bean
-    public BCryptPasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder(16);
-    }
 }
